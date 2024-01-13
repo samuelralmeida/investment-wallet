@@ -10,6 +10,14 @@ type Investiment struct {
 	Name     string
 	Cnpj     string
 	Bank     string
-	Amount   int
+	Amount   float64
 	Pocket   string
+	DeleteAt *time.Time
+}
+
+type InvestimentCheckpoint struct {
+	ID            int
+	InvestimentID string
+	Amount        float64
+	DeleteAt      *time.Time
 }

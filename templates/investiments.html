@@ -8,8 +8,7 @@
 </head>
 
 <body>
-    <form action="/save" , method="post">
-
+    <form action="/investiments/checkpoint", method="post">
         <div class="container mx-auto p-4">
             <div class="grid grid-cols-1 gap-4">
                 {{ range . }}
@@ -31,46 +30,6 @@
             <br>
             <input type="submit" value="Submit">
         </div>
-
-        <!-- {{ range . }}
-
-        <hr>
-
-        <div>
-            <p>Date: {{ .Date }}</p>
-        </div>
-
-        <div>
-            <p>Caixa: {{ .Box }}</p>
-        </div>
-
-        <div>
-            <p>Categoria: {{ .Category }}</p>
-        </div>
-
-        <div>
-            <p>Nome: {{ .Name }} - CNPJ: {{ .Cnpj }}</p>
-        </div>
-
-        <div>
-            <p>Banco: {{ .Bank }}</p>
-        </div>
-
-        <div>
-            <p>Valor: {{ .Amount }}</p>
-        </div>
-
-        <div>
-            <p>Carteira: {{ .Pocket }}</p>
-        </div>
-
-        <label for="fname">First name:</label><br>
-        <input type="text" id="fname" name="fname" value="John"><br>
-
-        <hr>
-
-        {{ end }} -->
-
     </form>
 
 </body>
