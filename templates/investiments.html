@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <form action="/save" , method="post">
+
+        <div class="container mx-auto p-4">
+            <div class="grid grid-cols-1 gap-4">
+                {{ range . }}
+                    <div class="border-solid border-2 border-sky-500 p-1 bg-slate-300">
+                        <p class="font-bold">Investimento: <span class="font-normal">{{ .Name }}</span></p>
+                        <p class="font-bold">Cnpj: <span class="font-normal">{{ .Cnpj }}</span></p>
+                        <p class="font-bold">Data da aplicação: <span class="font-normal">{{ .Date }}</span></p>
+                        <p class="font-bold">Caixa: <span class="font-normal">{{ .Box }}</span></p>
+                        <p class="font-bold">Categoria: <span class="font-normal">{{ .Category }}</span></p>
+                        <p class="font-bold">Banco: <span class="font-normal">{{ .Bank }}</span></p>
+                        <p class="font-bold">Valor: <span class="font-normal">{{ .Amount }}</span></p>
+                        <p class="font-bold">Carteira: <span class="font-normal">{{ .Pocket }}</span></p>
+
+                        <label for="{{ .ID }}" class="font-bold">Valor atual:</label>
+                        <input class="border-solid border-1 border-sky-100 p1" type="number" step="0.01" id="{{ .ID }}" name="{{ .ID }}" value="{{ .Amount }}"><br>
+                    </div>
+                 {{ end }}
+            </div>
+            <br>
+            <input type="submit" value="Submit">
+        </div>
+
+        <!-- {{ range . }}
+
+        <hr>
+
+        <div>
+            <p>Date: {{ .Date }}</p>
+        </div>
+
+        <div>
+            <p>Caixa: {{ .Box }}</p>
+        </div>
+
+        <div>
+            <p>Categoria: {{ .Category }}</p>
+        </div>
+
+        <div>
+            <p>Nome: {{ .Name }} - CNPJ: {{ .Cnpj }}</p>
+        </div>
+
+        <div>
+            <p>Banco: {{ .Bank }}</p>
+        </div>
+
+        <div>
+            <p>Valor: {{ .Amount }}</p>
+        </div>
+
+        <div>
+            <p>Carteira: {{ .Pocket }}</p>
+        </div>
+
+        <label for="fname">First name:</label><br>
+        <input type="text" id="fname" name="fname" value="John"><br>
+
+        <hr>
+
+        {{ end }} -->
+
+    </form>
+
+</body>
+
+</html>
