@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/samuelralmeida/investiment-calc/entity"
 )
 
@@ -25,7 +26,8 @@ func (s *service) ListInvestiments(ctx context.Context) (*[]entity.Investiment, 
 }
 
 func (s *service) CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error {
-	panic("not implemented")
+	investiment.ID = uuid.NewString()
+	return s.Repository.SaveInvestiment(ctx, investiment)
 }
 
 func (s *service) CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.InvestimentCheckpoint) error {

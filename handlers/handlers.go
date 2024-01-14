@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/samuelralmeida/investiment-calc/entity"
 	"github.com/samuelralmeida/investiment-calc/templates"
@@ -66,6 +67,40 @@ func (h *handlers) SaveInvestimentCheckpoints(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "error to save checkpoints", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/investiments", http.StatusFound)
+}
+
+func (h *handlers) RenderInvestimentNew(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFS(templates.FS, "investiment.html")
+	t.Execute(w, nil)
+}
+
+func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
+	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "amount must be a number", http.StatusBadRequest)
+		return
+	}
+
+	investiment := &entity.Investiment{}
+
+	investiment.Name = r.FormValue("fund")
+	investiment.Cnpj = r.FormValue("cnpj")
+	investiment.Box = r.FormValue("box")
+	investiment.Category = r.FormValue("category")
+	investiment.Bank = r.FormValue("bank")
+	investiment.Wallet = r.FormValue("wallet")
+	investiment.Date = time.Now()
+	investiment.Amount = amount
+
+	err = h.Service.CreateInvestiment(r.Context(), investiment)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to save investiment", http.StatusInternalServerError)
 		return
 	}
 

@@ -29,7 +29,7 @@ func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment
 		err := rows.Scan(
 			&investiment.ID, &investiment.Date, &investiment.Box, &investiment.Category,
 			&investiment.Name, &investiment.Cnpj, &investiment.Bank, &investiment.Amount,
-			&investiment.Pocket, &investiment.DeleteAt,
+			&investiment.Wallet, &investiment.DeleteAt,
 		)
 
 		if err != nil {
@@ -43,7 +43,20 @@ func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment
 }
 
 func (r *repository) SaveInvestiment(ctx context.Context, investiment *entity.Investiment) error {
-	panic("not implemented")
+	_, err := r.DB.ExecContext(
+		ctx,
+		`
+			INSERT INTO investiments (id, date, box, category, name, cnpj, bank, amount, wallet)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`,
+		investiment.ID, investiment.Date, investiment.Box, investiment.Category, investiment.Name,
+		investiment.Cnpj, investiment.Bank, investiment.Amount, investiment.Wallet,
+	)
+
+	if err != nil {
+		return fmt.Errorf("inser investiment: %w", err)
+	}
+	return nil
 }
 
 func (r *repository) SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.InvestimentCheckpoint) error {

@@ -11,7 +11,7 @@ type Investiment struct {
 	Cnpj     string
 	Bank     string
 	Amount   float64
-	Pocket   string
+	Wallet   string
 	DeleteAt *time.Time
 }
 

@@ -18,7 +18,7 @@ func main() {
 			cnpj       TEXT NOT NULL,
 			bank       TEXT NOT NULL,
 			amount     REAL NOT NULL,
-			pocket     TEXT NOT NULL,
+			wallet     TEXT NOT NULL,
 			deleted_at DATETIME NULL
 		);
 	`)
@@ -44,7 +44,7 @@ func main() {
 	_, err = db.Exec(`
 		INSERT INTO investiments (
 			id, date, box, 
-			category, name, cnpj, bank, amount, pocket
+			category, name, cnpj, bank, amount, wallet
 		)
 		VALUES(
 			'1f15914a-a40e-4c44-a4d4-c1289b34bf5f', '2024-01-13 20:02:22.258427399 ', 'estabilidade',
@@ -59,7 +59,7 @@ func main() {
 	_, err = db.Exec(`
 		INSERT INTO investiments (
 			id, date, box,
-			category, name, cnpj, bank, amount, pocket
+			category, name, cnpj, bank, amount, wallet
 		)
 		VALUES(
 			'd628eb7c-2107-40c7-8e04-aeb0b7605205', '2024-01-13 20:05:22.258427399 ', 'diversificação',
