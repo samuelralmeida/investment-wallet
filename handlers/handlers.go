@@ -15,7 +15,7 @@ import (
 type InvestimentServiceInterface interface {
 	ListInvestiments(ctx context.Context) (*[]entity.Investiment, error)
 	CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error
-	CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.InvestimentCheckpoint) error
+	CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.Checkpoint) error
 }
 
 type handlers struct {
@@ -41,7 +41,7 @@ func (h *handlers) RenderInvestimentsList(w http.ResponseWriter, r *http.Request
 func (h *handlers) SaveInvestimentCheckpoints(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	checkpoints := []entity.InvestimentCheckpoint{}
+	checkpoints := []entity.Checkpoint{}
 
 	for key, values := range r.Form {
 		if len(values) != 1 {
@@ -57,9 +57,10 @@ func (h *handlers) SaveInvestimentCheckpoints(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		checkpoints = append(checkpoints, entity.InvestimentCheckpoint{
+		checkpoints = append(checkpoints, entity.Checkpoint{
 			InvestimentID: key,
-			Amount:        value,
+			Value:         value,
+			Date:          time.Now(),
 		})
 	}
 
@@ -94,7 +95,6 @@ func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
 	investiment.Category = r.FormValue("category")
 	investiment.Bank = r.FormValue("bank")
 	investiment.Wallet = r.FormValue("wallet")
-	investiment.Date = time.Now()
 	investiment.Amount = amount
 
 	err = h.Service.CreateInvestiment(r.Context(), investiment)

@@ -15,9 +15,10 @@ type Investiment struct {
 	DeleteAt *time.Time
 }
 
-type InvestimentCheckpoint struct {
+type Checkpoint struct {
 	ID            int
 	InvestimentID string
-	Amount        float64
+	Date          time.Time
+	Value         float64
 	DeleteAt      *time.Time
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/samuelralmeida/investiment-calc/entity"
@@ -10,7 +11,7 @@ import (
 type InvestimentRepositoryInterface interface {
 	ListInvestiment(ctx context.Context) (*[]entity.Investiment, error)
 	SaveInvestiment(ctx context.Context, investiment *entity.Investiment) error
-	SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.InvestimentCheckpoint) error
+	SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.Checkpoint) error
 }
 
 type service struct {
@@ -27,9 +28,10 @@ func (s *service) ListInvestiments(ctx context.Context) (*[]entity.Investiment, 
 
 func (s *service) CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error {
 	investiment.ID = uuid.NewString()
+	investiment.Date = time.Now()
 	return s.Repository.SaveInvestiment(ctx, investiment)
 }
 
-func (s *service) CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.InvestimentCheckpoint) error {
-	panic("not implemented")
+func (s *service) CreateInvestmentCheckpoint(ctx context.Context, checkpoints *[]entity.Checkpoint) error {
+	return s.Repository.SaveInvestimentCheckpoints(ctx, checkpoints)
 }

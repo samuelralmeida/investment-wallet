@@ -59,6 +59,24 @@ func (r *repository) SaveInvestiment(ctx context.Context, investiment *entity.In
 	return nil
 }
 
-func (r *repository) SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.InvestimentCheckpoint) error {
-	panic("not implemented")
+func (r *repository) SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.Checkpoint) error {
+	tx, err := r.DB.Begin()
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("INSERT INTO checkpoints (investiment_id, date, value) VALUES (?, ?, ?)")
+	if err != nil {
+		return fmt.Errorf("prepare statement: %w", err)
+	}
+
+	for _, checkpoint := range *checkpoints {
+		_, err = stmt.Exec(checkpoint.InvestimentID, checkpoint.Date, checkpoint.Value)
+		if err != nil {
+			return fmt.Errorf("insert checkpoint: %w", err)
+		}
+	}
+
+	return tx.Commit()
 }

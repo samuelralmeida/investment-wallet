@@ -31,7 +31,8 @@ func main() {
 		CREATE TABLE IF NOT EXISTS checkpoints (
 			id             INTEGER PRIMARY KEY AUTOINCREMENT,
 			investiment_id TEXT NOT NULL,
-			amount         REAL NOT NULL,
+			date           DATETIME NOT NULL,
+			value         REAL NOT NULL,
 			deleted_at	   DATETIME NULL,
 			FOREIGN KEY (investiment_id) REFERENCES investiments(id)
 		);
