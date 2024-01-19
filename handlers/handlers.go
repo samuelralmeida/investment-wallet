@@ -16,6 +16,7 @@ type InvestimentServiceInterface interface {
 	ListInvestiments(ctx context.Context) (*[]entity.Investiment, error)
 	CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error
 	CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.Checkpoint) error
+	Calculate(ctx context.Context) (*entity.Wallet, error)
 }
 
 type handlers struct {
@@ -105,4 +106,16 @@ func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/investiments", http.StatusFound)
+}
+
+func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
+	wallet, err := h.Service.Calculate(r.Context())
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "calcuate", http.StatusInternalServerError)
+		return
+	}
+
+	t, _ := template.ParseFS(templates.FS, "calculate.html")
+	t.Execute(w, wallet)
 }

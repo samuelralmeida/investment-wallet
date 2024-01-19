@@ -30,6 +30,8 @@ func main() {
 	r.Get("/investiments/new", handlers.RenderInvestimentNew)
 	r.Post("/investiments/new", handlers.SaveInvestiment)
 
+	r.Get("/calculate", handlers.Calculate)
+
 	log.Println("running in port 3000...")
 	http.ListenAndServe(":3000", r)
 }
