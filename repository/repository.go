@@ -19,7 +19,10 @@ func New(db *sql.DB) *repository {
 }
 
 func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment, error) {
-	rows, err := r.DB.QueryContext(ctx, "SELECT * FROM investiments")
+	rows, err := r.DB.QueryContext(
+		ctx,
+		"SELECT i.id, i.date, i.box, i.category, i.name, i.cnpj, i.bank, i.amount, i.wallet, i.deleted_at FROM investiments i",
+	)
 	if err != nil {
 		return nil, fmt.Errorf("select investiments: %w", err)
 	}

@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/samuelralmeida/investiment-calc/entity"
@@ -105,7 +107,7 @@ func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/investiments", http.StatusFound)
+	http.Redirect(w, r, "/investiments/new", http.StatusFound)
 }
 
 func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
@@ -116,6 +118,15 @@ func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, _ := template.ParseFS(templates.FS, "calculate.html")
+	t, _ := template.New("calculate.html").Funcs(
+		template.FuncMap{
+			"money": func(input float64) string {
+				return strings.Replace(fmt.Sprintf("%.2f", input), ".", ",", 1)
+			},
+			"ratio": func(part, total float64) float64 {
+				return (part / total) * 100
+			},
+		},
+	).ParseFS(templates.FS, "calculate.html")
 	t.Execute(w, wallet)
 }

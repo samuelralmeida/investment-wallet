@@ -3,3 +3,6 @@ install-binaries:
 
 run-watch:
 	gow -e=go,mod,html -c run main.go
+
+run-prod:
+	ENV=_prod go run main.go
