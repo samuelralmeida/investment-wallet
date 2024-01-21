@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/samuelralmeida/investiment-calc/entity"
+	"github.com/samuelralmeida/investiment-calc/internal/box"
 	"github.com/samuelralmeida/investiment-calc/templates"
 )
 
@@ -129,4 +130,11 @@ func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
 		},
 	).ParseFS(templates.FS, "calculate.html")
 	t.Execute(w, wallet)
+}
+
+func (h *handlers) RenderNewFund(w http.ResponseWriter, r *http.Request) {
+	data := struct{ BoxOptions []string }{BoxOptions: box.OptionsList()}
+
+	t, _ := template.ParseFS(templates.FS, "new-fund.html")
+	t.Execute(w, data)
 }
