@@ -10,7 +10,7 @@ type Share struct {
 }
 
 type Shares []Share
-
+/*
 // Funds groups units of the same investiment fund
 // When the share does not have a checkpoint, the checkpoint value is equal to the initial found value
 func (ii *Shares) Funds() *Funds {
@@ -55,3 +55,4 @@ func (ii *Shares) Funds() *Funds {
 
 	return &funds
 }
+*/

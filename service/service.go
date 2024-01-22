@@ -14,6 +14,7 @@ type InvestimentRepositoryInterface interface {
 	SaveInvestiment(ctx context.Context, investiment *entity.Investiment) error
 	SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.Checkpoint) error
 	ListInestimentsWithCheckpoint(ctx context.Context, wallet string) (*entity.Shares, error)
+	SaveFund(ctx context.Context, fund *entity.Fund) error
 }
 
 type service struct {
@@ -38,7 +39,14 @@ func (s *service) CreateInvestmentCheckpoint(ctx context.Context, checkpoints *[
 	return s.Repository.SaveInvestimentCheckpoints(ctx, checkpoints)
 }
 
+func (s *service) CreateFund(ctx context.Context, fund *entity.Fund) error {
+	fund.ID = uuid.NewString()
+	return s.Repository.SaveFund(ctx, fund)
+}
+
 func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
+	return nil, nil
+	/*
 	investimentsWithCheckpoint, err := s.Repository.ListInestimentsWithCheckpoint(ctx, "principal")
 	if err != nil {
 		return nil, fmt.Errorf("fetch investiments: %w", err)
@@ -117,6 +125,7 @@ func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
 		return nil
 	*/
 }
+
 
 func result(amount, value float64) string {
 	return fmt.Sprintf(

@@ -18,6 +18,22 @@ func New(db *sql.DB) *repository {
 	return &repository{DB: db}
 }
 
+func (r *repository) SaveFund(ctx context.Context, fund *entity.Fund) error {
+	_, err := r.DB.ExecContext(
+		ctx,
+		`
+			INSERT INTO funds (id, name, cnpj, box, flavor, bank, min_value)
+			VALUES (?, ?, ?, ?, ?, ?, ?)
+		`,
+		fund.ID, fund.Name, fund. Cnpj, fund.Box, fund.Flavor, fund.Bank, fund.MinValue,
+	)
+
+	if err != nil {
+		return fmt.Errorf("inser investiment: %w", err)
+	}
+	return nil
+}
+
 func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment, error) {
 	rows, err := r.DB.QueryContext(
 		ctx,

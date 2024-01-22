@@ -1,9 +1,23 @@
 package entity
 
 import (
-	"fmt"
+	"time"
 )
 
+type Fund struct {
+	ID string
+	Name string
+	Cnpj string
+	Box string
+	Flavor string
+	Bank string
+	MinValue float64
+	DeletedAt *time.Time
+}
+
+type Funds []Fund
+
+/*
 // Fund is the collection of shares of the same fund
 type Fund struct {
 	Name         string
@@ -118,3 +132,4 @@ func (f *Funds) TotalCheckpoints() int {
 	}
 	return total
 }
+*/

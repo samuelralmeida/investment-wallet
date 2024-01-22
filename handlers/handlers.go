@@ -20,6 +20,7 @@ type InvestimentServiceInterface interface {
 	CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error
 	CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.Checkpoint) error
 	Calculate(ctx context.Context) (*entity.Wallet, error)
+	CreateFund(ctx context.Context, fund *entity.Fund) error
 }
 
 type handlers struct {
@@ -137,4 +138,40 @@ func (h *handlers) RenderNewFund(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFS(templates.FS, "new-fund.html")
 	t.Execute(w, data)
+}
+
+func (h *handlers) NewFund(w http.ResponseWriter, r *http.Request) {
+	minValue, err := strconv.ParseFloat(r.FormValue("fund-min-value"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "amount must be a number", http.StatusBadRequest)
+		return
+	}
+
+	boxOption := r.FormValue("fund-box")
+	isValid, box, flavor := box.ValidateOption(boxOption)
+	if !isValid {
+		log.Println("box option ivalid:", boxOption)
+		http.Error(w, "box option invalid", http.StatusBadRequest)
+		return
+	}
+
+	fund := &entity.Fund{}
+
+	fund.Name = r.FormValue("fund-name")
+	// TODO: validate cnpj
+	fund.Cnpj = r.FormValue("fund-cnpj")
+	fund.Bank = r.FormValue("fund-bank")
+	fund.Box = box
+	fund.Flavor = flavor
+	fund.MinValue = minValue
+
+	err = h.Service.CreateFund(r.Context(), fund)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to create fund", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/funds/new", http.StatusFound)
 }

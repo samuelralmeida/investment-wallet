@@ -14,7 +14,7 @@ func main() {
 			name       TEXT NOT NULL,
 			cnpj       TEXT NOT NULL,
 			box        TEXT NOT NULL,
-			category   TEXT NOT NULL,
+			flavor     TEXT NOT NULL,
 			bank       TEXT NOT NULL,
 			min_value  REAL NOT NULL,
 			deleted_at DATETIME NULL
