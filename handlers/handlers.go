@@ -17,10 +17,11 @@ import (
 
 type InvestimentServiceInterface interface {
 	ListInvestiments(ctx context.Context) (*[]entity.Investiment, error)
-	CreateInvestiment(ctx context.Context, investiment *entity.Investiment) error
 	CreateInvestmentCheckpoint(ctx context.Context, investimentCheckpoints *[]entity.Checkpoint) error
 	Calculate(ctx context.Context) (*entity.Wallet, error)
 	CreateFund(ctx context.Context, fund *entity.Fund) error
+	ListFunds(ctx context.Context) (*entity.Funds, error)
+	CreateInvestiment(ctx context.Context, investiment *entity.Investment) error
 }
 
 type handlers struct {
@@ -84,33 +85,33 @@ func (h *handlers) RenderInvestimentNew(w http.ResponseWriter, r *http.Request) 
 	t.Execute(w, nil)
 }
 
-func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
-	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "amount must be a number", http.StatusBadRequest)
-		return
-	}
+// func (h *handlers) SaveInvestiment(w http.ResponseWriter, r *http.Request) {
+// 	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
+// 	if err != nil {
+// 		log.Println(err)
+// 		http.Error(w, "amount must be a number", http.StatusBadRequest)
+// 		return
+// 	}
 
-	investiment := &entity.Investiment{}
+// 	investiment := &entity.Investiment{}
 
-	investiment.Name = r.FormValue("fund")
-	investiment.Cnpj = r.FormValue("cnpj")
-	investiment.Box = r.FormValue("box")
-	investiment.Category = r.FormValue("category")
-	investiment.Bank = r.FormValue("bank")
-	investiment.Wallet = r.FormValue("wallet")
-	investiment.Amount = amount
+// 	investiment.Name = r.FormValue("fund")
+// 	investiment.Cnpj = r.FormValue("cnpj")
+// 	investiment.Box = r.FormValue("box")
+// 	investiment.Category = r.FormValue("category")
+// 	investiment.Bank = r.FormValue("bank")
+// 	investiment.Wallet = r.FormValue("wallet")
+// 	investiment.Amount = amount
 
-	err = h.Service.CreateInvestiment(r.Context(), investiment)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "error to save investiment", http.StatusInternalServerError)
-		return
-	}
+// 	err = h.Service.CreateInvestiment(r.Context(), investiment)
+// 	if err != nil {
+// 		log.Println(err)
+// 		http.Error(w, "error to save investiment", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	http.Redirect(w, r, "/investiments/new", http.StatusFound)
-}
+// 	http.Redirect(w, r, "/investiments/new", http.StatusFound)
+// }
 
 func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
 	wallet, err := h.Service.Calculate(r.Context())
@@ -144,7 +145,7 @@ func (h *handlers) NewFund(w http.ResponseWriter, r *http.Request) {
 	minValue, err := strconv.ParseFloat(r.FormValue("fund-min-value"), 64)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "amount must be a number", http.StatusBadRequest)
+		http.Error(w, "min value must be a number", http.StatusBadRequest)
 		return
 	}
 
@@ -174,4 +175,49 @@ func (h *handlers) NewFund(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/funds/new", http.StatusFound)
+}
+
+func (h *handlers) RenderNewInvestment(w http.ResponseWriter, r *http.Request) {
+	funds, err := h.Service.ListFunds(r.Context())
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to list funds", http.StatusInternalServerError)
+		return
+	}
+	data := struct{ FundOptions *entity.Funds }{FundOptions: funds}
+
+	t, _ := template.ParseFS(templates.FS, "new-investment.html")
+	t.Execute(w, data)
+}
+
+func (h *handlers) NewInvestment(w http.ResponseWriter, r *http.Request) {
+	value, err := strconv.ParseFloat(r.FormValue("investment-value"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "investment value must be a number", http.StatusBadRequest)
+		return
+	}
+
+	date, err := time.Parse(time.DateOnly, r.FormValue("investment-date"))
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "invalid date", http.StatusBadRequest)
+		return
+	}
+
+	investment := &entity.Investment{}
+
+	investment.FundID = r.FormValue("investment-fund")
+	investment.Wallet = r.FormValue("investment-wallet")
+	investment.Date = date
+	investment.Value = value
+
+	err = h.Service.CreateInvestiment(r.Context(), investment)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to create investment", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/investments/new", http.StatusFound)
 }

@@ -24,3 +24,12 @@ type Checkpoint struct {
 	Value         float64
 	DeleteAt      *time.Time
 }
+
+type Investment struct {
+	ID       string
+	FundID   string
+	Date     time.Time
+	Value    float64
+	Wallet   string
+	DeleteAt *time.Time
+}
