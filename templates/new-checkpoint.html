@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style> 
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {-webkit-appearance: none;margin: 0;}
+        input[type=number] {-moz-appearance: textfield;/* Firefox */}
+    </style> 
+</head>
+
+<body>
+    <div class="container mx-auto p-4">
+
+        <div class="flex items-center justify-center">
+            <p class="text-3xl">SALVAR UM CHECKPOINT</p>
+        </div>
+
+        <form action="/checkpoints/new", method="post">
+            <div class="grid grid-cols-1 gap-4">
+
+                <div>
+                    <label for="checkpoint-fund" class="pt-3 block text-sm font-medium leading-6 text-gray-900">Fundo</label>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                        <select name="checkpoint-fund" id="checkpoint-fund" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+                            <option disabled selected value></option>
+                            {{ range .FundOptions }}
+                                <option value="{{ .ID }}">{{ .Name }}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="checkpoint-date" class="pt-3 block text-sm font-medium leading-6 text-gray-900">Data</label>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                        <input type="date" name="checkpoint-date" id="checkpoint-date" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="checkpoint-wallet" class="pt-3 block text-sm font-medium leading-6 text-gray-900">Carteira</label>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                        <input type="text" name="checkpoint-wallet" id="checkpoint-wallet" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="checkpoint-value" class="pt-3 block text-sm font-medium leading-6 text-gray-900">Valor atual</label>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        <input type="number" step="0.01" name="checkpoint-value" id="checkpoint-value" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="pt-3">
+                        <input type="submit" value="SALVAR" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+</html>

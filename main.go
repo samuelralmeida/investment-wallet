@@ -38,6 +38,9 @@ func main() {
 	r.Get("/investments/new", handlers.RenderNewInvestment)
 	r.Post("/investments/new", handlers.NewInvestment)
 
+	r.Get("/checkpoints/new", handlers.RenderNewCheckpoint)
+	r.Post("/checkpoints/new", handlers.NewCheckpoint)
+
 	log.Println("running in port 3000...")
 	http.ListenAndServe(":3000", r)
 }

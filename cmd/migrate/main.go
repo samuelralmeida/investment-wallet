@@ -41,6 +41,22 @@ func main() {
 		panic(err)
 	}
 
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS checkpoints (
+			id            TEXT NOT NULL,
+			fund_id       TEXT NOT NULL,
+			date          DATE NOT NULL,
+			value         REAL NOT NULL,
+			wallet        TEXT NOT NULL,
+			deleted_at	  DATETIME NULL,
+			FOREIGN KEY (fund_id) REFERENCES funds(id)
+		);
+	`)
+
+	if err != nil {
+		panic(err)
+	}
+
 	/*
 	   _, err = db.Exec(`
 

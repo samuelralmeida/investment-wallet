@@ -16,6 +16,7 @@ type InvestimentRepositoryInterface interface {
 	SaveFund(ctx context.Context, fund *entity.Fund) error
 	SelectFunds(ctx context.Context) (*entity.Funds, error)
 	SaveInvestment(ctx context.Context, investment *entity.Investment) error
+	SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
 }
 
 type service struct {
@@ -47,6 +48,11 @@ func (s *service) CreateFund(ctx context.Context, fund *entity.Fund) error {
 
 func (s *service) ListFunds(ctx context.Context) (*entity.Funds, error) {
 	return s.Repository.SelectFunds(ctx)
+}
+
+func (s *service) CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error {
+	checkpoint.ID = uuid.NewString()
+	return s.Repository.SaveCheckpoint(ctx, checkpoint)
 }
 
 func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {

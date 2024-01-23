@@ -22,6 +22,7 @@ type InvestimentServiceInterface interface {
 	CreateFund(ctx context.Context, fund *entity.Fund) error
 	ListFunds(ctx context.Context) (*entity.Funds, error)
 	CreateInvestiment(ctx context.Context, investiment *entity.Investment) error
+	CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
 }
 
 type handlers struct {
@@ -220,4 +221,49 @@ func (h *handlers) NewInvestment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/investments/new", http.StatusFound)
+}
+
+func (h *handlers) RenderNewCheckpoint(w http.ResponseWriter, r *http.Request) {
+	funds, err := h.Service.ListFunds(r.Context())
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to list funds", http.StatusInternalServerError)
+		return
+	}
+	data := struct{ FundOptions *entity.Funds }{FundOptions: funds}
+
+	t, _ := template.ParseFS(templates.FS, "new-checkpoint.html")
+	t.Execute(w, data)
+}
+
+func (h *handlers) NewCheckpoint(w http.ResponseWriter, r *http.Request) {
+	value, err := strconv.ParseFloat(r.FormValue("checkpoint-value"), 64)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "checkpoint value must be a number", http.StatusBadRequest)
+		return
+	}
+
+	date, err := time.Parse(time.DateOnly, r.FormValue("checkpoint-date"))
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "invalid date", http.StatusBadRequest)
+		return
+	}
+
+	checkpoint := &entity.Checkpoint2{}
+
+	checkpoint.FundID = r.FormValue("checkpoint-fund")
+	checkpoint.Wallet = r.FormValue("checkpoint-wallet")
+	checkpoint.Date = date
+	checkpoint.Value = value
+
+	err = h.Service.CreateCheckpoint(r.Context(), checkpoint)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to create checkpoint", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/checkpoints/new", http.StatusFound)
 }

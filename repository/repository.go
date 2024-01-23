@@ -75,6 +75,22 @@ func (r *repository) SaveInvestment(ctx context.Context, investment *entity.Inve
 	return nil
 }
 
+func (r *repository) SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error {
+	_, err := r.DB.ExecContext(
+		ctx,
+		`
+			INSERT INTO checkpoints (id, fund_id, date, value, wallet)
+			VALUES (?, ?, ?, ?, ?)
+		`,
+		checkpoint.ID, checkpoint.FundID, checkpoint.Date.Format(time.DateOnly), checkpoint.Value, checkpoint.Wallet,
+	)
+	if err != nil {
+		return fmt.Errorf("insert checkpoint: %w", err)
+	}
+
+	return nil
+}
+
 func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment, error) {
 	rows, err := r.DB.QueryContext(
 		ctx,
