@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type Checkpoint2 struct {
+type Checkpoint struct {
 	ID       string
 	FundID   string
 	Date     time.Time

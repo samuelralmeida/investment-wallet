@@ -25,11 +25,6 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Get("/investiments", handlers.RenderInvestimentsList)
-	r.Post("/investiments/checkpoint", handlers.SaveInvestimentCheckpoints)
-	// r.Get("/investiments/new", handlers.RenderInvestimentNew)
-	// r.Post("/investiments/new", handlers.SaveInvestiment)
-
 	r.Get("/calculate", handlers.Calculate)
 
 	r.Get("/funds/new", handlers.RenderNewFund)

@@ -10,16 +10,13 @@ import (
 )
 
 type InvestimentRepositoryInterface interface {
-	ListInvestiment(ctx context.Context) (*[]entity.Investiment, error)
-	SaveInvestimentCheckpoints(ctx context.Context, checkpoints *[]entity.Checkpoint) error
-	ListInestimentsWithCheckpoint(ctx context.Context, wallet string) (*entity.Shares, error)
 	SaveFund(ctx context.Context, fund *entity.Fund) error
 	SelectFunds(ctx context.Context) (*entity.Funds, error)
 	SaveInvestment(ctx context.Context, investment *entity.Investment) error
-	SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
+	SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint) error
 	SelectFundsByIds(ctx context.Context, ids []string) (*entity.Funds, error)
 	SelectInvestmentsByWallet(ctx context.Context, wallet string) (*entity.Investments, error)
-	SelectLastCheckpointByFundIDAndWallet(ctx context.Context, fundID string, wallet string) (*entity.Checkpoint2, error)
+	SelectLastCheckpointByFundIDAndWallet(ctx context.Context, fundID string, wallet string) (*entity.Checkpoint, error)
 }
 
 type service struct {
@@ -30,18 +27,10 @@ func New(repository InvestimentRepositoryInterface) *service {
 	return &service{Repository: repository}
 }
 
-func (s *service) ListInvestiments(ctx context.Context) (*[]entity.Investiment, error) {
-	return s.Repository.ListInvestiment(ctx)
-}
-
 func (s *service) CreateInvestiment(ctx context.Context, investiment *entity.Investment) error {
 	investiment.ID = uuid.NewString()
 	investiment.Date = time.Now()
 	return s.Repository.SaveInvestment(ctx, investiment)
-}
-
-func (s *service) CreateInvestmentCheckpoint(ctx context.Context, checkpoints *[]entity.Checkpoint) error {
-	return s.Repository.SaveInvestimentCheckpoints(ctx, checkpoints)
 }
 
 func (s *service) CreateFund(ctx context.Context, fund *entity.Fund) error {
@@ -53,12 +42,12 @@ func (s *service) ListFunds(ctx context.Context) (*entity.Funds, error) {
 	return s.Repository.SelectFunds(ctx)
 }
 
-func (s *service) CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error {
+func (s *service) CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint) error {
 	checkpoint.ID = uuid.NewString()
 	return s.Repository.SaveCheckpoint(ctx, checkpoint)
 }
 
-func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet2, error) {
+func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet, error) {
 	investments, err := s.Repository.SelectInvestmentsByWallet(ctx, wallet)
 	if err != nil {
 		return nil, err
@@ -95,7 +84,7 @@ func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet2, e
 		}
 	}
 
-	return &entity.Wallet2{
+	return &entity.Wallet{
 		Name:        wallet,
 		FundsDetail: fundsDetail,
 	}, nil
@@ -103,8 +92,13 @@ func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet2, e
 }
 
 func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
+	panic("not implemented")
+}
+
+/*
+func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
 	return nil, nil
-	/*
+
 		investimentsWithCheckpoint, err := s.Repository.ListInestimentsWithCheckpoint(ctx, "principal")
 		if err != nil {
 			return nil, fmt.Errorf("fetch investiments: %w", err)
@@ -181,8 +175,9 @@ func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
 
 
 			return nil
-	*/
+
 }
+*/
 
 func result(amount, value float64) string {
 	return fmt.Sprintf(
