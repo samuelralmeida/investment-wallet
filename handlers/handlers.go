@@ -46,8 +46,9 @@ func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
 			"money": func(input float64) string {
 				return strings.Replace(fmt.Sprintf("%.2f", input), ".", ",", 1)
 			},
-			"ratio": func(part, total float64) float64 {
-				return (part / total) * 100
+			"ratio": func(part, total float64) string {
+				fmt.Println(part, total)
+				return strings.Replace(fmt.Sprintf("%.2f", ((part/total)*100)), ".", ",", 1)
 			},
 		},
 	).ParseFS(templates.FS, "calculate.html")

@@ -92,7 +92,7 @@ func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet, er
 }
 
 func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {
-	panic("not implemented")
+	return s.Wallet(ctx, "principal")
 }
 
 /*
