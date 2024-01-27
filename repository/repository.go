@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/samuelralmeida/investiment-calc/entity"
@@ -89,6 +90,66 @@ func (r *repository) SaveCheckpoint(ctx context.Context, checkpoint *entity.Chec
 	}
 
 	return nil
+}
+
+func (r *repository) SelectInvestmentsByWallet(ctx context.Context, wallet string) (*entity.Investments, error) {
+	rows, err := r.DB.QueryContext(
+		ctx,
+		"SELECT id, fund_id, date, value, wallet FROM investments WHERE wallet = ? AND deleted_at IS NULL",
+		wallet,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("select investments by wallet: %w", err)
+	}
+
+	investments := entity.Investments{}
+
+	for rows.Next() {
+		var investment entity.Investment
+		err := rows.Scan(&investment.ID, &investment.FundID, &investment.Date, &investment.Value, &investment.Wallet)
+
+		if err != nil {
+			return nil, fmt.Errorf("scan investment row: %w", err)
+		}
+
+		investments = append(investments, investment)
+	}
+
+	return &investments, nil
+}
+
+func (r *repository) SelectFundsByIds(ctx context.Context, ids []string) (*entity.Funds, error) {
+	placeholders := make([]string, len(ids))
+	args := make([]any, len(ids))
+	for i, id := range ids {
+		placeholders[i] = "?"
+		args[i] = id
+	}
+
+	query := fmt.Sprintf(
+		"SELECT id, name, cnpj, box, flavor, bank, min_value FROM funds WHERE deleted_at IS NULL AND id IN (%s)",
+		strings.Join(placeholders, ", "),
+	)
+
+	rows, err := r.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("select funds by id: %w", err)
+	}
+
+	funds := entity.Funds{}
+
+	for rows.Next() {
+		var fund entity.Fund
+		err := rows.Scan(&fund.ID, &fund.Name, &fund.Cnpj, &fund.Box, &fund.Flavor, &fund.Bank, &fund.MinValue)
+
+		if err != nil {
+			return nil, fmt.Errorf("scan fund row: %w", err)
+		}
+
+		funds = append(funds, fund)
+	}
+
+	return &funds, nil
 }
 
 func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment, error) {

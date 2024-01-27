@@ -17,6 +17,8 @@ type InvestimentRepositoryInterface interface {
 	SelectFunds(ctx context.Context) (*entity.Funds, error)
 	SaveInvestment(ctx context.Context, investment *entity.Investment) error
 	SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
+	SelectFundsByIds(ctx context.Context, ids []string) (*entity.Funds, error)
+	SelectInvestmentsByWallet(ctx context.Context, wallet string) (*entity.Investments, error)
 }
 
 type service struct {
@@ -53,6 +55,44 @@ func (s *service) ListFunds(ctx context.Context) (*entity.Funds, error) {
 func (s *service) CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error {
 	checkpoint.ID = uuid.NewString()
 	return s.Repository.SaveCheckpoint(ctx, checkpoint)
+}
+
+func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet2, error) {
+	investments, err := s.Repository.SelectInvestmentsByWallet(ctx, wallet)
+	if err != nil {
+		return nil, err
+	}
+
+	fundsMap := make(map[string]entity.Investments)
+	fundIds := []string{}
+	for _, investment := range *investments {
+		fundID := investment.FundID
+		_, ok := fundsMap[fundID]
+		if !ok {
+			fundIds = append(fundIds, fundID)
+		}
+		fundsMap[fundID] = append(fundsMap[fundID], investment)
+	}
+
+	funds, err := s.Repository.SelectFundsByIds(ctx, fundIds)
+	if err != nil {
+		return nil, err
+	}
+
+	fundsDetail := make([]entity.FundDetail, len(*funds))
+
+	for i, fund := range *funds {
+		fundsDetail[i] = entity.FundDetail{
+			Fund:        fund,
+			Investments: fundsMap[fund.ID],
+		}
+	}
+
+	return &entity.Wallet2{
+		Name:        wallet,
+		FundsDetail: fundsDetail,
+	}, nil
+
 }
 
 func (s *service) Calculate(ctx context.Context) (*entity.Wallet, error) {

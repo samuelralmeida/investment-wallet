@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/samuelralmeida/investiment-calc/entity"
 	"github.com/samuelralmeida/investiment-calc/internal/box"
 	"github.com/samuelralmeida/investiment-calc/templates"
@@ -23,6 +24,7 @@ type InvestimentServiceInterface interface {
 	ListFunds(ctx context.Context) (*entity.Funds, error)
 	CreateInvestiment(ctx context.Context, investiment *entity.Investment) error
 	CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
+	Wallet(ctx context.Context, wallet string) (*entity.Wallet2, error)
 }
 
 type handlers struct {
@@ -266,4 +268,18 @@ func (h *handlers) NewCheckpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/checkpoints/new", http.StatusFound)
+}
+
+func (h *handlers) Wallet(w http.ResponseWriter, r *http.Request) {
+	walletName := chi.URLParam(r, "name")
+
+	wallet, err := h.Service.Wallet(r.Context(), walletName)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "error to get wallet", http.StatusInternalServerError)
+		return
+	}
+
+	t, _ := template.ParseFS(templates.FS, "wallet.html")
+	t.Execute(w, wallet)
 }
