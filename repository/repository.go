@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -95,7 +96,7 @@ func (r *repository) SaveCheckpoint(ctx context.Context, checkpoint *entity.Chec
 func (r *repository) SelectInvestmentsByWallet(ctx context.Context, wallet string) (*entity.Investments, error) {
 	rows, err := r.DB.QueryContext(
 		ctx,
-		"SELECT id, fund_id, date, value, wallet FROM investments WHERE wallet = ? AND deleted_at IS NULL",
+		"SELECT id, fund_id, date, value, wallet FROM investments WHERE wallet = ? AND deleted_at IS NULL ORDER BY date ASC",
 		wallet,
 	)
 	if err != nil {
@@ -150,6 +151,26 @@ func (r *repository) SelectFundsByIds(ctx context.Context, ids []string) (*entit
 	}
 
 	return &funds, nil
+}
+
+func (r *repository) SelectLastCheckpointByFundIDAndWallet(ctx context.Context, fundID string, wallet string) (*entity.Checkpoint2, error) {
+	var checkpoint entity.Checkpoint2
+
+	err := r.DB.QueryRowContext(
+		ctx,
+		"SELECT id, fund_id, date, value, wallet FROM checkpoints WHERE fund_id = ? AND wallet = ? AND deleted_at IS NULL ORDER BY date DESC LIMIT 1",
+		fundID, wallet,
+	).Scan(&checkpoint.ID, &checkpoint.FundID, &checkpoint.Date, &checkpoint.Value, &checkpoint.Wallet)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return &checkpoint, nil
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("select checkpoint by fundID and wallet: %w", err)
+	}
+
+	return &checkpoint, nil
 }
 
 func (r *repository) ListInvestiment(ctx context.Context) (*[]entity.Investiment, error) {

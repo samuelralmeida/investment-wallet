@@ -53,6 +53,18 @@
                         {{ end }}
                     </ul>
                 </div>
+
+                <hr class="p-2">
+
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-lg font-bold leading-none text-gray-900 dark:text-white uppercase">ÚLTIMO CHECKPOINT</h5>
+                </div>
+
+                <div class="flex items-center justify-between mb-4 pl-5">
+                    <div class="basis-1/2"><p class="text-x font-bold leading-none text-gray-900 dark:text-white uppercase">DATA: {{ .CheckpointDate }}</p></div>
+                    <div class="basis-1/2"><p class="text-base font-bold leading-none text-gray-900 dark:text-white uppercase">VALOR: {{ .CheckpointValue }}</p></div>
+                </div>
+
             </div>
 
         {{ end }}

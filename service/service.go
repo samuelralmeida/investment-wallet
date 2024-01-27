@@ -19,6 +19,7 @@ type InvestimentRepositoryInterface interface {
 	SaveCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint2) error
 	SelectFundsByIds(ctx context.Context, ids []string) (*entity.Funds, error)
 	SelectInvestmentsByWallet(ctx context.Context, wallet string) (*entity.Investments, error)
+	SelectLastCheckpointByFundIDAndWallet(ctx context.Context, fundID string, wallet string) (*entity.Checkpoint2, error)
 }
 
 type service struct {
@@ -82,9 +83,15 @@ func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet2, e
 	fundsDetail := make([]entity.FundDetail, len(*funds))
 
 	for i, fund := range *funds {
+		checkpoint, err := s.Repository.SelectLastCheckpointByFundIDAndWallet(ctx, fund.ID, wallet)
+		if err != nil {
+			return nil, err
+		}
+
 		fundsDetail[i] = entity.FundDetail{
 			Fund:        fund,
 			Investments: fundsMap[fund.ID],
+			Checkpoint:  *checkpoint,
 		}
 	}
 

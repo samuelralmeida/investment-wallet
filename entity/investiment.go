@@ -49,9 +49,18 @@ type Investments []Investment
 type FundDetail struct {
 	Fund        Fund
 	Investments Investments
+	Checkpoint  Checkpoint2
 }
 
 type Wallet2 struct {
 	Name        string
 	FundsDetail []FundDetail
+}
+
+func (fd *FundDetail) CheckpointDate() string {
+	return fd.Checkpoint.Date.Format("02/01/2006")
+}
+
+func (fd *FundDetail) CheckpointValue() string {
+	return strings.Replace(fmt.Sprintf("$%.2f", fd.Checkpoint.Value), ".", ",", 1)
 }
