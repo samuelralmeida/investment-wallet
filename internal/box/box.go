@@ -7,8 +7,10 @@ import (
 )
 
 var options = map[string][]string{
-	"estabildiade":    {"baunilha", "pimenta"},
-	"antifragilidade": {"ouro", "dólar"},
+	"ESTABILIDADE":    {"BAUNILHA", "PIMENTA"},                                                      // 22,5%
+	"DIVERSIFICAÇÃO":  {"VIÉS MACRO", "EX-TESOUREIROS", "VIÉS GLOBAL", "INFRAESTRUTURA", "PIMENTA"}, // 40%
+	"VALORIZAÇÃO":     {"QUALIDADE", "FORA DO RADAR", "PERFIL GLOBAL", "VIÉS COMPRADO", "PIMENTA"},  // 30%
+	"ANTIFRAGILIDADE": {"OURO", "DÓLAR"},                                                            // 7,5%
 }
 
 var optionsList []string

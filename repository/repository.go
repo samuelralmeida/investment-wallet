@@ -30,7 +30,7 @@ func (r *repository) SaveFund(ctx context.Context, fund *entity.Fund) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("inser investiment: %w", err)
+		return fmt.Errorf("insert fund: %w", err)
 	}
 	return nil
 }

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/samuelralmeida/investiment-calc/entity"
@@ -29,7 +28,6 @@ func New(repository InvestimentRepositoryInterface) *service {
 
 func (s *service) CreateInvestiment(ctx context.Context, investiment *entity.Investment) error {
 	investiment.ID = uuid.NewString()
-	investiment.Date = time.Now()
 	return s.Repository.SaveInvestment(ctx, investiment)
 }
 

@@ -1,6 +1,18 @@
 package main
 
-import "github.com/samuelralmeida/investiment-calc/database"
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+	"github.com/samuelralmeida/investiment-calc/database"
+)
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error loading .env file")
+	}
+}
 
 func main() {
 	db, err := database.NewSqliteConnection()
