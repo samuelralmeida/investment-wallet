@@ -43,8 +43,8 @@ func (w *Wallet) TotalCurrentValue() float64 {
 	return total
 }
 
-func (w *Wallet) RatioTotalValue() float64 {
-	return w.TotalCurrentValue() / w.TotalInvestedValue()
+func (w *Wallet) Income() float64 {
+	return ((w.TotalCurrentValue() / w.TotalInvestedValue()) * 100) - 100
 }
 
 func (w *Wallet) Boxes() Boxes {

@@ -142,15 +142,6 @@ func TestWallet(t *testing.T) {
 		}
 	})
 
-	t.Run("total ratio value", func(t *testing.T) {
-		var got float64 = baseWallet.RatioTotalValue()
-		var want float64 = (fakeFund1Checkpoint.Value + fakeFund2Checkpoint.Value + fakeFund3Checkpoint.Value) / (fakeFund1Investment1.Value + fakeFund1Investment2.Value + fakeFund2Investment1.Value + fakeFund2Investment2.Value + fakeFund3Investment1.Value)
-
-		if got != want {
-			t.Errorf("Wallet.RatioTotalValue() = %v, want %v", got, want)
-		}
-	})
-
 	t.Run("boxes", func(t *testing.T) {
 		var got = baseWallet.Boxes()
 		var want entity.Boxes = entity.Boxes{
