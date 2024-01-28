@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/samuelralmeida/investiment-calc/entity"
+	"github.com/samuelralmeida/investment-wallet/entity"
 )
 
 type repository struct {

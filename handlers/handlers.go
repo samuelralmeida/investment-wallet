@@ -11,18 +11,18 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/samuelralmeida/investiment-calc/entity"
-	"github.com/samuelralmeida/investiment-calc/internal/box"
-	"github.com/samuelralmeida/investiment-calc/templates"
+	"github.com/samuelralmeida/investment-wallet/entity"
+	"github.com/samuelralmeida/investment-wallet/internal/box"
+	"github.com/samuelralmeida/investment-wallet/templates"
 )
 
 type InvestimentServiceInterface interface {
-	Calculate(ctx context.Context) (*entity.Wallet, error)
 	CreateFund(ctx context.Context, fund *entity.Fund) error
 	ListFunds(ctx context.Context) (*entity.Funds, error)
 	CreateInvestiment(ctx context.Context, investiment *entity.Investment) error
 	CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint) error
 	Wallet(ctx context.Context, wallet string) (*entity.Wallet, error)
+	Calculate(ctx context.Context, wallet string) (*entity.Wallet, error)
 }
 
 type handlers struct {
@@ -31,27 +31,6 @@ type handlers struct {
 
 func New(service InvestimentServiceInterface) *handlers {
 	return &handlers{Service: service}
-}
-
-func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
-	wallet, err := h.Service.Calculate(r.Context())
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "calcuate", http.StatusInternalServerError)
-		return
-	}
-
-	t, _ := template.New("calculate.html").Funcs(
-		template.FuncMap{
-			"money": func(input float64) string {
-				return strings.Replace(fmt.Sprintf("%.2f", input), ".", ",", 1)
-			},
-			"ratio": func(part, total float64) string {
-				return strings.Replace(fmt.Sprintf("%.2f", ((part/total)*100)), ".", ",", 1)
-			},
-		},
-	).ParseFS(templates.FS, "calculate.html")
-	t.Execute(w, wallet)
 }
 
 func (h *handlers) RenderNewFund(w http.ResponseWriter, r *http.Request) {
@@ -198,5 +177,28 @@ func (h *handlers) Wallet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t, _ := template.ParseFS(templates.FS, "wallet.html")
+	t.Execute(w, wallet)
+}
+
+func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
+	walletName := chi.URLParam(r, "name")
+
+	wallet, err := h.Service.Calculate(r.Context(), walletName)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "calcuate", http.StatusInternalServerError)
+		return
+	}
+
+	t, _ := template.New("calculate.html").Funcs(
+		template.FuncMap{
+			"money": func(input float64) string {
+				return strings.Replace(fmt.Sprintf("%.2f", input), ".", ",", 1)
+			},
+			"ratio": func(part, total float64) string {
+				return strings.Replace(fmt.Sprintf("%.2f", ((part/total)*100)), ".", ",", 1)
+			},
+		},
+	).ParseFS(templates.FS, "calculate.html")
 	t.Execute(w, wallet)
 }

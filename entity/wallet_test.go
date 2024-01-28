@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/samuelralmeida/investiment-calc/entity"
+	"github.com/samuelralmeida/investment-wallet/entity"
 )
 
 var fakeWalletName = "test-wallet"

@@ -7,10 +7,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"github.com/samuelralmeida/investiment-calc/database"
-	"github.com/samuelralmeida/investiment-calc/handlers"
-	"github.com/samuelralmeida/investiment-calc/repository"
-	"github.com/samuelralmeida/investiment-calc/service"
+	"github.com/samuelralmeida/investment-wallet/database"
+	"github.com/samuelralmeida/investment-wallet/handlers"
+	"github.com/samuelralmeida/investment-wallet/repository"
+	"github.com/samuelralmeida/investment-wallet/service"
 )
 
 func init() {
@@ -33,8 +33,6 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Get("/calculate", handlers.Calculate)
-
 	r.Get("/funds/new", handlers.RenderNewFund)
 	r.Post("/funds/new", handlers.NewFund)
 
@@ -45,6 +43,7 @@ func main() {
 	r.Post("/checkpoints/new", handlers.NewCheckpoint)
 
 	r.Get("/wallet/{name}", handlers.Wallet)
+	r.Get("/calculate/{name}", handlers.Calculate)
 
 	log.Println("running in port 3000...")
 	http.ListenAndServe(":3000", r)

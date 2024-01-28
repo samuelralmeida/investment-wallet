@@ -1,4 +1,4 @@
-module github.com/samuelralmeida/investiment-calc
+module github.com/samuelralmeida/investment-wallet
 
 go 1.21.6
 
