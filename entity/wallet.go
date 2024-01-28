@@ -19,6 +19,14 @@ func (fd *FundDetail) TotalInvestedValue() float64 {
 	return total
 }
 
+func (fd *FundDetail) Shares() int {
+	return len(fd.Investments)
+}
+
+func (fd *FundDetail) Income() float64 {
+	return ((fd.Checkpoint.Value / fd.TotalInvestedValue()) * 100) - 100
+}
+
 func (w *Wallet) TotalInvestedValue() float64 {
 	var total float64
 	for _, fund := range w.FundsDetail {
