@@ -1,2 +1,2 @@
-investments.db
-investments_prod.db
+*.db
+.env

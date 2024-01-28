@@ -4,15 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const sqliteFileName = "investments%s.db"
-
 func NewSqliteConnection() (*sql.DB, error) {
-	env := os.Getenv("ENV")
-	filename := fmt.Sprintf(sqliteFileName, env)
+	env := strings.ToUpper(os.Getenv("ENV"))
+	filename := os.Getenv(fmt.Sprintf("%s_SQLITE_FILENAME", env))
 
 	db, err := sql.Open("sqlite3", filename)
 	if err != nil {

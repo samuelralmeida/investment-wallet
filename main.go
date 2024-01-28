@@ -6,11 +6,19 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 	"github.com/samuelralmeida/investiment-calc/database"
 	"github.com/samuelralmeida/investiment-calc/handlers"
 	"github.com/samuelralmeida/investiment-calc/repository"
 	"github.com/samuelralmeida/investiment-calc/service"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error loading .env file")
+	}
+}
 
 func main() {
 	db, err := database.NewSqliteConnection()
