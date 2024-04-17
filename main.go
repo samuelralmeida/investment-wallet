@@ -3,49 +3,53 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"github.com/samuelralmeida/investment-wallet/database"
+	"github.com/samuelralmeida/investment-wallet/entity"
 	"github.com/samuelralmeida/investment-wallet/handlers"
-	"github.com/samuelralmeida/investment-wallet/repository"
-	"github.com/samuelralmeida/investment-wallet/service"
+	"github.com/samuelralmeida/investment-wallet/repository/sqlite"
+	"github.com/samuelralmeida/investment-wallet/services"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func init() {
+func main() {
+	conf := loadConf()
+
+	repository, err := sqlite.NewConnection(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s := services.New(repository)
+	h := handlers.New(s)
+
+	e := echo.New()
+	e.Static("/static", "static")
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(handlers.HandleApiError())
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.GET("/wallets", h.RenderListWallets)
+	e.POST("/wallets", h.SaveWallet)
+	e.Logger.Fatal(e.Start(":1234"))
+}
+
+func loadConf() *entity.Conf {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("error loading .env file")
 	}
-}
 
-func main() {
-	db, err := database.NewSqliteConnection()
-	if err != nil {
-		panic(err)
+	return &entity.Conf{
+		SQLITE: entity.Sqlite{
+			FILENAME: os.Getenv("SQLITE_FILENAME"),
+		},
 	}
-
-	repository := repository.New(db)
-	service := service.New(repository)
-	handlers := handlers.New(service)
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-
-	r.Get("/funds/new", handlers.RenderNewFund)
-	r.Post("/funds/new", handlers.NewFund)
-
-	r.Get("/investments/new", handlers.RenderNewInvestment)
-	r.Post("/investments/new", handlers.NewInvestment)
-
-	r.Get("/checkpoints/new", handlers.RenderNewCheckpoint)
-	r.Post("/checkpoints/new", handlers.NewCheckpoint)
-
-	r.Get("/wallet/{name}", handlers.Wallet)
-	r.Get("/calculate/{name}", handlers.Calculate)
-	r.Get("/recommendation/{name}", handlers.Recommendation)
-
-	log.Println("running in port 3000...")
-	http.ListenAndServe(":3000", r)
 }
