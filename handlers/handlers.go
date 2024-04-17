@@ -23,6 +23,7 @@ type InvestimentServiceInterface interface {
 	CreateCheckpoint(ctx context.Context, checkpoint *entity.Checkpoint) error
 	Wallet(ctx context.Context, wallet string) (*entity.Wallet, error)
 	Calculate(ctx context.Context, wallet string) (*entity.Wallet, error)
+	Recommendation(ctx context.Context, walletName string) (*entity.Wallet, error)
 }
 
 type handlers struct {
@@ -201,4 +202,15 @@ func (h *handlers) Calculate(w http.ResponseWriter, r *http.Request) {
 		},
 	).ParseFS(templates.FS, "calculate.html")
 	t.Execute(w, wallet)
+}
+
+func (h *handlers) Recommendation(w http.ResponseWriter, r *http.Request) {
+	walletName := chi.URLParam(r, "name")
+	wallet, err := h.Service.Recommendation(r.Context(), walletName)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "recommendation", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(wallet)
 }

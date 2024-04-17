@@ -44,6 +44,7 @@ func main() {
 
 	r.Get("/wallet/{name}", handlers.Wallet)
 	r.Get("/calculate/{name}", handlers.Calculate)
+	r.Get("/recommendation/{name}", handlers.Recommendation)
 
 	log.Println("running in port 3000...")
 	http.ListenAndServe(":3000", r)

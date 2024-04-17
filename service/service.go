@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/samuelralmeida/investment-wallet/entity"
@@ -85,9 +86,55 @@ func (s *service) Wallet(ctx context.Context, wallet string) (*entity.Wallet, er
 		Name:        wallet,
 		FundsDetail: fundsDetail,
 	}, nil
-
 }
 
 func (s *service) Calculate(ctx context.Context, wallet string) (*entity.Wallet, error) {
 	return s.Wallet(ctx, wallet)
+}
+
+func (s *service) Recommendation(ctx context.Context, walletName string) (*entity.Wallet, error) {
+	wallet, err := s.Wallet(ctx, walletName)
+	if err != nil {
+		return nil, err
+	}
+
+	recommendation := struct {
+		Current float64
+		Invest  float64
+		Total   float64
+		Resp    map[string]float64
+	}{}
+
+	recommendation.Current = wallet.TotalCurrentValue()
+	recommendation.Invest = 3000
+	recommendation.Total = recommendation.Current + recommendation.Invest
+	recommendation.Resp = make(map[string]float64)
+
+	rules := map[string]float64{
+		"ESTABILIDADE":    0.225,
+		"DIVERSIFICAÇÃO":  0.4,
+		"VALORIZAÇÃO":     0.3,
+		"ANTIFRAGILIDADE": 0.075,
+	}
+
+	boxes := wallet.Boxes()
+
+	for _, box := range boxes {
+		goalRule := rules[box.Name]
+		goalInvest := recommendation.Total * goalRule
+		recommendation.Resp[box.Name] = goalInvest - box.CurrentValue
+		fmt.Println(box.Name, recommendation.Current, recommendation.Invest, recommendation.Current+recommendation.Invest, box.CurrentValue, goalRule, goalInvest, goalInvest-box.CurrentValue)
+	}
+
+	for _, box := range boxes {
+		goalRule := rules[box.Name]
+		goalInvest := recommendation.Total * goalRule
+		// recommendation
+
+		recommendation.Resp[box.Name] = goalInvest - box.CurrentValue
+		fmt.Println(box.Name, recommendation.Current, recommendation.Invest, recommendation.Current+recommendation.Invest, box.CurrentValue, goalRule, goalInvest, goalInvest-box.CurrentValue)
+	}
+
+	fmt.Printf("%+v\n", recommendation)
+	return nil, nil
 }
