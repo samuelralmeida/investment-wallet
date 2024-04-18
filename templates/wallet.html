@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/static/script/htmx.min.js"></script>
+  <script src="/static/script/tailwindcss.min.js"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon.png">
+</head>
+
+<body>
+  <div class="container mx-auto p-8">
+    <div class="flex gap-20 flex-col md:flex-row justify-between">
+      <div class="w-full md:w-1/2 mb-4">
+        <h2 class="text-lg font-bold mb-4">Criar nova Wallet</h2>
+        <form id="newWalletForm" hx-post="/wallets" hx-target="#walletsList" hx-swap="beforeend">
+          <div class="mb-4">
+            <label for="walletName" class="block text-gray-700">Nome:</label>
+            <input type="text" id="walletName" name="name" class="form-input w-full bg-gray-200 border border-gray-300 rounded-md px-2 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <button type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">Enviar</button>
+        </form>
+      </div>
+      <div class="w-full md:w-1/2">
+        <h2 class="text-lg font-bold mb-4">Wallets criadas</h2>
+        <ul class="list-none" id="walletsList">
+          {{ range . }}
+          <li class="py-2"><a class="hover:underline uppercase" href="/wallets/{{.ID}}">{{.Name}}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="/static/script/script.js"></script>
+</body>
+
+</html>

@@ -22,33 +22,21 @@ func (h *Handlers) RenderListWallets(c echo.Context) error {
 		return ApiError{StatusCode: http.StatusInternalServerError, Err: err, Msg: "list wallets err"}
 	}
 
-	html := "<div>"
-	for _, wallet := range wallets {
-		w := fmt.Sprintf("<p>%d - %s</p>", wallet.ID, wallet.Name)
-		html = html + w
-	}
-	html = html + "</div>"
-
-	return c.HTML(200, html)
+	return renderTemplate(c, http.StatusOK, "wallet.html", wallets)
 }
 
 func (h *Handlers) SaveWallet(c echo.Context) error {
 	name := c.FormValue("name")
+	fmt.Println("Name", name)
 	if name == "" {
-		return ApiError{StatusCode: http.StatusBadRequest, Err: nil, Msg: "invalid wallet name"}
+		return ApiError{StatusCode: http.StatusBadRequest, Err: nil, Msg: "nome da carteira inválido"}
 	}
 
 	wallet := &entity.Wallet{Name: name}
 	err := h.Services.SaveWallet(c.Request().Context(), wallet)
 	if err != nil {
-		return ApiError{StatusCode: http.StatusInternalServerError, Err: err, Msg: "save wallet err"}
+		return ApiError{StatusCode: http.StatusInternalServerError, Err: err, Msg: "erro ao salvar uma carteira"}
 	}
 
-	html := "<div>"
-	w := fmt.Sprintf("<p>%d - %s</p>", wallet.ID, wallet.Name)
-	html = html + w
-	html = html + "</div>"
-
-	return c.HTML(http.StatusCreated, html)
-
+	return renderTemplate(c, http.StatusOK, "wallet_li.html", wallet)
 }
