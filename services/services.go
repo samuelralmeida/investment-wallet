@@ -2,6 +2,7 @@ package services
 
 type IRepository interface {
 	IWalletRepository
+	ICategoryRepository
 }
 
 type Services struct {

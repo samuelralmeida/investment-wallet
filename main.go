@@ -38,6 +38,8 @@ func main() {
 	})
 	e.GET("/wallets", h.RenderListWallets)
 	e.POST("/wallets", h.SaveWallet)
+
+	e.GET("/categories", h.RenderListCategories)
 	e.Logger.Fatal(e.Start(":1234"))
 }
 
