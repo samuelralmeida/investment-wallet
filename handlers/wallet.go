@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -27,7 +26,6 @@ func (h *Handlers) RenderListWallets(c echo.Context) error {
 
 func (h *Handlers) SaveWallet(c echo.Context) error {
 	name := c.FormValue("name")
-	fmt.Println("Name", name)
 	if name == "" {
 		return ApiError{StatusCode: http.StatusBadRequest, Err: nil, Msg: "nome da carteira inválido"}
 	}

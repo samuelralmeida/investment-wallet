@@ -39,7 +39,10 @@ func main() {
 	e.GET("/wallets", h.RenderListWallets)
 	e.POST("/wallets", h.SaveWallet)
 
-	e.GET("/categories", h.RenderListCategories)
+	e.GET("/funds", h.RenderListFunds)
+	e.POST("/funds", h.SaveFund)
+
+	e.GET("/elements/funds/note", h.ElementFundNote)
 	e.Logger.Fatal(e.Start(":1234"))
 }
 

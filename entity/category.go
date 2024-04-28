@@ -7,7 +7,7 @@ type Category struct {
 	RateIndicated   float64
 	Rules           []string
 	Notes           []string
-	SubCategory     []SubCategory
+	SubCategories   []SubCategory
 }
 
 type SubCategory struct {
@@ -36,7 +36,7 @@ func (cs *Categories) AddCategory(category Category) {
 func (cs *Categories) AddSubCategory(categoryID int, subCategory SubCategory) {
 	for i := range *cs {
 		if (*cs)[i].ID == categoryID {
-			(*cs)[i].SubCategory = append((*cs)[i].SubCategory, subCategory)
+			(*cs)[i].SubCategories = append((*cs)[i].SubCategories, subCategory)
 			return
 		}
 	}

@@ -11,7 +11,7 @@ import (
 
 type IService interface {
 	IWalletService
-	ICategoryService
+	IFundService
 }
 
 type Handlers struct {

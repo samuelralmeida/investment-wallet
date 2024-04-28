@@ -2,40 +2,10 @@ package sqlite
 
 import (
 	"context"
-	"database/sql/driver"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/samuelralmeida/investment-wallet/entity"
 )
-
-type jsonField []string
-
-func (jf *jsonField) Scan(value interface{}) error {
-	if value == nil {
-		return nil
-	}
-
-	data, ok := value.(string)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	err := json.Unmarshal([]byte(data), &jf)
-	if err != nil {
-		return fmt.Errorf("scan json field: %w", err)
-	}
-
-	return nil
-}
-
-func (jf jsonField) Value() (driver.Value, error) {
-	b := new(strings.Builder)
-	err := json.NewEncoder(b).Encode(jf)
-	return b.String(), err
-}
 
 type sqliteCategory struct {
 	ID               int
@@ -99,14 +69,35 @@ func (r *Repository) SelectCategories(ctx context.Context) ([]entity.Category, e
 			RateIndicated:   sc.RateIndicated,
 			Rules:           sc.Rules,
 			Notes:           sc.Notes,
-			SubCategory:     []entity.SubCategory{subCategory},
+			SubCategories:   []entity.SubCategory{subCategory},
 		}
 
 		categories = append(categories, *category)
 	}
 
-	fmt.Println(categories)
-
 	return categories, nil
+}
 
+func (r *Repository) selectCategoryBySubCategoryID(ctx context.Context, subCategoryID int) (*entity.Category, error) {
+	query := `
+		select
+			c.id, c.name, c.estimated_months, c.rate_indicated, c.rules, c.notes,
+			sc.id as subcategory_id, sc.name, sc.rules, sc.notes
+		from category c
+		join sub_category sc on sc.category_id = c.id
+		where sc.id = ?
+	`
+
+	row := r.db.QueryRowContext(ctx, query, subCategoryID)
+	category := entity.Category{}
+	err := row.Scan(
+		&category.ID, &category.Name, &category.EstimatedMonths, &category.RateIndicated,
+		&category.Rules, &category.Notes,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("scan category by subcategory id: %w", err)
+	}
+
+	return &category, nil
 }
